@@ -1,0 +1,26 @@
+{
+    "title": "Grafana MCP Server",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "grafanaUrl": {
+            "title": "Grafana URL",
+            "type": "string",
+            "description": "Base URL of your Grafana instance, e.g. https://grafana.example.com",
+            "editor": "textfield"
+        },
+        "serviceAccountToken": {
+            "title": "Grafana service account token",
+            "type": "string",
+            "description": "Token of a Grafana service account. A Viewer role is enough; the server exposes read-only tools only.",
+            "editor": "textfield",
+            "isSecret": true
+        },
+        "orgId": {
+            "title": "Grafana organization ID",
+            "type": "integer",
+            "description": "Optional. Grafana organization to use when the token has access to more than one.",
+            "editor": "number"
+        }
+    }
+}
