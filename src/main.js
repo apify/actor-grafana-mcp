@@ -67,6 +67,9 @@ function proxy(req, res) {
     const headers = Object.fromEntries(
         FORWARDED_HEADERS.filter((name) => req.headers[name] !== undefined).map((name) => [name, req.headers[name]]),
     );
+    // mcp-grafana answers with plain JSON but rejects POSTs whose Accept lacks text/event-stream,
+    // which breaks JSON-only callers such as the Server tab's "Try it out".
+    if (req.method === 'POST') headers.accept = 'application/json, text/event-stream';
     const upstream = http.request({
         host: '127.0.0.1',
         port: UPSTREAM_PORT,
