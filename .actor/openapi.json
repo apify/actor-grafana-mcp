@@ -1,0 +1,111 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Grafana MCP Server",
+        "version": "0.1.0",
+        "description": "Read-only MCP server for Grafana. Connect MCP clients to POST /mcp (MCP streamable HTTP transport, stateless JSON responses)."
+    },
+    "paths": {
+        "/mcp": {
+            "post": {
+                "summary": "MCP endpoint",
+                "description": "Send an MCP JSON-RPC 2.0 message, e.g. initialize, tools/list or tools/call. Only read-only Grafana tools are available.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/JsonRpcRequest" },
+                            "examples": {
+                                "toolsList": {
+                                    "summary": "List available tools",
+                                    "value": { "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
+                                },
+                                "searchDashboards": {
+                                    "summary": "Search dashboards",
+                                    "value": {
+                                        "jsonrpc": "2.0",
+                                        "id": 2,
+                                        "method": "tools/call",
+                                        "params": { "name": "search_dashboards", "arguments": { "query": "api" } }
+                                    }
+                                },
+                                "listDatasources": {
+                                    "summary": "List datasources",
+                                    "value": {
+                                        "jsonrpc": "2.0",
+                                        "id": 3,
+                                        "method": "tools/call",
+                                        "params": { "name": "list_datasources", "arguments": {} }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "JSON-RPC response",
+                        "content": {
+                            "application/json": { "schema": { "$ref": "#/components/schemas/JsonRpcResponse" } }
+                        }
+                    },
+                    "202": { "description": "Notification accepted (no response body)" },
+                    "400": { "description": "Invalid JSON-RPC message" }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "Server status",
+                "description": "Shows whether Grafana credentials are configured.",
+                "responses": {
+                    "200": {
+                        "description": "Status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": { "type": "string" },
+                                        "mcpEndpoint": { "type": "string", "example": "/mcp" },
+                                        "configured": { "type": "boolean" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "JsonRpcRequest": {
+                "type": "object",
+                "required": ["jsonrpc", "method"],
+                "properties": {
+                    "jsonrpc": { "type": "string", "enum": ["2.0"] },
+                    "id": { "oneOf": [{ "type": "string" }, { "type": "integer" }] },
+                    "method": { "type": "string", "example": "tools/list" },
+                    "params": { "type": "object", "additionalProperties": true }
+                }
+            },
+            "JsonRpcResponse": {
+                "type": "object",
+                "properties": {
+                    "jsonrpc": { "type": "string", "enum": ["2.0"] },
+                    "id": { "oneOf": [{ "type": "string" }, { "type": "integer" }] },
+                    "result": { "type": "object", "additionalProperties": true },
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": { "type": "integer" },
+                            "message": { "type": "string" },
+                            "data": {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
