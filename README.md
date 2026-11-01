@@ -26,6 +26,6 @@ Every request needs an Apify API token. Prefer a scoped token that can only run 
 
 ## Notes
 
-- Grafana credentials come only from the Actor input; per-request `X-Grafana-*` overrides are stripped.
-- Without credentials, the server still starts and lists tools, but every tool call returns an error explaining how to configure them.
+- Grafana URL, credentials and org come only from the Actor input; the proxy forwards only MCP transport headers, so `Authorization` and `X-Grafana-*` overrides never reach the server.
+- Without credentials, the server still starts and lists tools, and its `initialize` instructions explain how to configure them. Tools that query Grafana fail; public-docs tools still work.
 - Pricing: free; you pay only for Apify platform usage of the Standby runs.

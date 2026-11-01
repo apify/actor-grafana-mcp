@@ -4,7 +4,6 @@
     "private": true,
     "type": "module",
     "description": "Read-only Grafana MCP server running as an Apify Standby Actor",
-    "main": "src/main.js",
     "scripts": {
         "start": "node src/main.js"
     },
