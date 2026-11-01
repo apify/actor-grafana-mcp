@@ -1,0 +1,12 @@
+{
+    "actorSpecification": 1,
+    "name": "grafana-mcp-server",
+    "title": "Grafana MCP Server",
+    "description": "Read-only remote MCP server for your Grafana, wrapping the official grafana/mcp-grafana in Apify Standby mode.",
+    "version": "0.1",
+    "buildTag": "latest",
+    "usesStandbyMode": true,
+    "webServerMcpPath": "/mcp",
+    "input": "./input_schema.json",
+    "dockerfile": "../Dockerfile"
+}
