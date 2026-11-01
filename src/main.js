@@ -106,6 +106,23 @@ const server = http.createServer((req, res) => {
     return sendJson(res, 404, { error: `Not found. The MCP endpoint is ${MCP_PATH}` });
 });
 
+// Open the public port only once mcp-grafana is up. Apify routes requests to the run as soon as
+// the readiness probe passes, so listening earlier makes the first request after a cold start fail with 502.
+async function waitForUpstream(timeoutMs = 30_000) {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+        try {
+            const res = await fetch(`http://127.0.0.1:${UPSTREAM_PORT}/healthz`);
+            if (res.ok) return;
+        } catch {
+            // Not listening yet.
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw new Error(`mcp-grafana did not become healthy within ${timeoutMs} ms`);
+}
+
+await waitForUpstream();
 server.listen(PUBLIC_PORT, () => {
     log.info(`Grafana MCP Server listening on port ${PUBLIC_PORT}, MCP endpoint ${MCP_PATH}`, { grafanaUrl });
 });
