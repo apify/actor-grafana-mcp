@@ -1,0 +1,6 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Grafana MCP Server output",
+    "description": "This Actor stores no data. It runs an MCP server in Standby mode; connect MCP clients to the Actor's or task's Standby URL with the /mcp path.",
+    "properties": {}
+}
