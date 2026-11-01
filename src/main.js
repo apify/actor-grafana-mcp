@@ -90,7 +90,8 @@ const server = http.createServer((req, res) => {
         return sendJson(res, 200, { status: 'ok' });
     }
 
-    const { pathname } = new URL(req.url, 'http://localhost');
+    // Plain split instead of new URL(): it throws on targets like "//[", which would crash the process.
+    const pathname = req.url.split('?', 1)[0];
     if (pathname === MCP_PATH) return proxy(req, res);
     if (pathname === '/' && req.method === 'GET') {
         return sendJson(res, 200, {
